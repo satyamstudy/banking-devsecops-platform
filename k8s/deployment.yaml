@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: banking-devsecops-api
+  namespace: banking-devsecops
+  labels:
+    app: banking-devsecops-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: banking-devsecops-api
+  template:
+    metadata:
+      labels:
+        app: banking-devsecops-api
+    spec:
+      containers:
+        - name: banking-devsecops-api
+          image: banking-devsecops-api:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: banking-api-config
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"

@@ -1,0 +1,11 @@
+groups:
+  - name: banking-devsecops-alerts
+    rules:
+      - alert: BankingApiHighErrorRate
+        expr: rate(banking_api_requests_total[5m]) > 100
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: High request rate detected on Banking API
+          description: Banking API request rate crossed the threshold for 5 minutes.
